@@ -1,86 +1,138 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, TextInput, TouchableHighlight, TouchableNativeFeedback, KeyboardAvoidingView } from 'react-native';
-
+import {
+    StyleSheet,
+    Text,
+    View,
+    Image,
+    TextInput,
+    TouchableHighlight,
+    TouchableNativeFeedback,
+    Keyboard,
+    Dimensions,
+    LayoutAnimation,
+    UIManager
+} from 'react-native';
+import styles from './styles/loginStyles'
 
 
 export default class Index extends React.Component {
+
+    constructor() {
+        super()
+        this.state = {
+            visibleHeight: null,
+            topLogo: null,
+            marginStyle: null,
+            marginTextStyle: null,
+            editable: true
+        }
+    }
+
+    componentWillMount() {
+        UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
+        this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this.keyboardDidShow.bind(this))
+        this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this.keyboardDidHide.bind(this))
+    }
+
+
+    componentWillUnmount() {
+        this.keyboardDidShowListener.remove()
+        this.keyboardDidHideListener.remove()
+    }
+
+    keyboardDidShow(e) {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
+        let newSize = Dimensions.get('window').height - e.endCoordinates.height
+        this.setState({
+            visibleHeight: newSize,
+            topLogo: { width: 100, height: 70 },
+            marginStyle: { marginTop: 30 },
+            marginTextStyle: { marginTop: 10 }
+        })
+    }
+
+    keyboardDidHide(e) {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
+        this.setState({
+            visibleHeight: Dimensions.get('window').height,
+            topLogo: { width: 186, height: 112 },
+            marginStyle: { marginTop: 40 },
+            marginTextStyle: { marginTop: 30 }
+        })
+    }
+
+
     render() {
         return (
-            <View style={styles.container}>
-                <View style={{ alignItems: 'center', marginTop: 50 }}>
-                    <Image source={require("../assets/sample-logo1.png")} />
+            <View style={[styles.container, { height: this.state.visibleHeight }]}>
+                <View style={styles.logo}>
+                    <Image source={require("../assets/sample-logo1.png")} style={[this.state.topLogo]} />
                 </View>
 
                 <View>
-                    <Text style={{ fontSize: 20, marginTop: 30 }}> Sign in </Text>
+                    <Text style={styles.signinText}> Sign in </Text>
                 </View>
 
                 <View>
                     <TextInput
-                        style={{
-                            height: 60,
-                            // color: '#ffffff',
-                            // textAlign: 'center',
-                            // backgroundColor: '#1D1F26',
-                            fontSize: 16,
-                            padding: 10,
-                            marginTop: 30
-                        }}
+                        style={[styles.formLoginInput]}
                         placeholder="EMAIL"
                         keyboardType="email-address"
-                        underlineColorAndroid="gray" />
+                        underlineColorAndroid="gray"
+                        returnKeyType="next"
+                        autoCapitalize="none"
+                        editable={this.state.editable}
+                        onSubmitEditing={(event) => { this.refs.Password.focus() }} />
                     <TextInput
-                        style={{
-                            height: 60,
-                            // color: '#ffffff',
-                            // textAlign: 'center',
-                            // backgroundColor: '#1D1F26',
-                            fontSize: 16,
-                            padding: 10,
-                            marginTop: 30
-                        }}
+                        ref='Password'
+                        style={[styles.formLoginInput]}
                         placeholder="PASSWORD"
                         secureTextEntry={true}
-                        underlineColorAndroid="gray" />
-                    <View style={{ alignItems: "center", marginTop: 40 }}>
-                        <TouchableHighlight style={{ backgroundColor: "#232E51", width: 360, height: 50, borderRadius: 25, alignItems: "center", padding: 15 }} >
-                            <Text style={{ fontSize: 16, color: "white" }}>Login</Text>
+                        underlineColorAndroid="gray"
+                        autoCapitalize="none"
+                        editable={this.state.editable}
+                        returnKeyType="done"
+                        onSubmitEditing={() => { this.setState({ editable: false }) }} />
+                    <View style={[styles.touchableLoginView, this.state.marginStyle]}>
+                        <TouchableHighlight style={styles.touchableLogin}
+                            onPress={() => this.setState({ editable: true })}>
+                            <Text style={styles.touchableLoginText}>Login</Text>
                         </TouchableHighlight>
                     </View>
-                    <View style={{ alignItems: "center", marginTop: 10 }}>
-                        <Text style={{ fontSize: 15 }}> or sign in with: </Text>
+                    <View style={styles.signinWithTextView}>
+                        <Text style={styles.signinWithText}> or sign in with: </Text>
                     </View>
-                    <View style={{ alignItems: "center", justifyContent: "center", flexDirection: "row", marginTop: 20 }}>
-                        <View style={{ borderRadius: 24, backgroundColor: '#232E51', width: 48, height: 48 }} >
+                    <View style={styles.socialButtonsView}>
+                        <View style={styles.touchableNativeView} >
                             <TouchableNativeFeedback
                                 background={TouchableNativeFeedback.Ripple('#4267B2', true)}
                                 onPress={() => console.log("Button Pressed")}
                             // style={{ backgroundColor: "#232E51", width: 360, height: 50, borderRadius: 25, alignItems: "center", padding: 15 }} >
                             >
                                 <View>
-                                    <Image source={require("../assets/fb-logo.png")} style={{ height: 50, width: 50 }} />
+                                    <Image source={require("../assets/fb-logo.png")} style={styles.socialIcons} />
                                 </View>
                             </TouchableNativeFeedback>
                         </View>
-                        <View style={{ borderRadius: 24, backgroundColor: '#232E51', width: 48, height: 48, marginLeft: 10 }} >
+                        <View style={styles.touchableNativeViewWithMargin} >
                             <TouchableNativeFeedback
                                 background={TouchableNativeFeedback.Ripple('#1DA1F2', true)}
                                 onPress={() => console.log("Button Pressed")}
                             // style={{ backgroundColor: "#232E51", width: 360, height: 50, borderRadius: 25, alignItems: "center", padding: 15 }} >
                             >
                                 <View>
-                                    <Image source={require("../assets/twitter-logo.png")} style={{ height: 50, width: 50 }} />
+                                    <Image source={require("../assets/twitter-logo.png")} style={styles.socialIcons} />
                                 </View>
                             </TouchableNativeFeedback>
                         </View>
-                        <View style={{ borderRadius: 24, backgroundColor: '#232E51', width: 48, height: 48, marginLeft: 10 }} >
+                        <View style={styles.touchableNativeViewWithMargin} >
                             <TouchableNativeFeedback
                                 background={TouchableNativeFeedback.Ripple('#BD081C', true)}
                                 onPress={() => console.log("Button Pressed")}
                             // style={{ backgroundColor: "#232E51", width: 360, height: 50, borderRadius: 25, alignItems: "center", padding: 15 }} >
                             >
                                 <View>
-                                    <Image source={require("../assets/pinterest-logo.png")} style={{ height: 50, width: 50 }} />
+                                    <Image source={require("../assets/pinterest-logo.png")} style={styles.socialIcons} />
                                 </View>
                             </TouchableNativeFeedback>
                         </View>
@@ -88,22 +140,12 @@ export default class Index extends React.Component {
 
                 </View>
 
-                <View style={{ alignItems: "center", flexDirection: "row", justifyContent: "space-between", position: "absolute", left: 20, right: 20, bottom: 10 }}>
-                    <Text style={{ fontSize: 15 }}>Don't Have An Account?</Text>
-                    <Text style={{ fontSize: 15 }}>Forgot Password</Text>
+                <View style={styles.footer}>
+                    <Text style={styles.footerText}>Don't Have An Account?</Text>
+                    <Text style={styles.footerText}>Forgot Password</Text>
 
                 </View>
             </View>
         );
     }
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#E7E7E7',
-        padding: 20
-        // alignItems: 'center',
-        // justifyContent: 'center',
-    },
-});
