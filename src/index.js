@@ -24,7 +24,12 @@ export default class Index extends React.Component {
             topLogo: null,
             marginStyle: null,
             marginTextStyle: null,
-            editable: true
+            editable: true,
+            email: "",
+            password: "",
+            background: null,
+            email_error: "",
+            password_error: ""
         }
     }
 
@@ -46,7 +51,7 @@ export default class Index extends React.Component {
         this.setState({
             visibleHeight: newSize,
             topLogo: { width: 100, height: 70 },
-            marginStyle: { marginTop: 30 },
+            marginStyle: { marginTop: 15 },
             marginTextStyle: { marginTop: 10 }
         })
     }
@@ -59,6 +64,70 @@ export default class Index extends React.Component {
             marginStyle: { marginTop: 40 },
             marginTextStyle: { marginTop: 30 }
         })
+    }
+
+    onFocus() {
+        if (this.state.email == "") {
+            this.setState({
+                editable: true,
+                email_error: "Email Address Required"
+            })
+            this.refs.Email.focus();
+        } else if (!this.validateEmail(this.state.email)) {
+            this.setState({
+                editable: true,
+                email_error: "Invalid Email Address"
+            })
+        } else {
+            this.setState({
+                editable: true,
+                email_error: ""
+            })
+            this.refs.Password.focus();
+        }
+    }
+
+    validateEmail = (email) => {
+        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(email);
+    };
+
+    onSubmit() {
+        if (this.state.password == "" && this.state.email == "") {
+            this.setState({
+                editable: true,
+                email_error: "Email Required",
+                password_error: "Password Required"
+            })
+        } else if (!this.validateEmail(this.state.email)) {
+            this.setState({
+                editable: true,
+                email_error: "Invalid Email Address"
+            })
+            this.refs.Email.focus();
+        } else {
+            this.setState({ editable: true, email_error: "", password_error: "" })
+            alert("Logging in......")
+
+        }
+    }
+
+    onReturnPasword() {
+        if (this.state.password == "") {
+            this.setState({
+                password_error: "Password Required"
+            })
+        } else if (!this.validateEmail(this.state.email)) {
+            this.setState({
+                editable: true,
+                email_error: "Invalid Email Address",
+                password_error: ""
+            })
+            this.refs.Email.focus();
+        } else {
+            this.setState({ editable: false, error: "", email_error: "", password_error: "" })
+            this.onSubmit()
+        }
     }
 
 
@@ -75,27 +144,32 @@ export default class Index extends React.Component {
 
                 <View>
                     <TextInput
-                        style={[styles.formLoginInput]}
+                        ref='Email'
+                        style={[styles.formLoginInput, this.state.background]}
                         placeholder="EMAIL"
                         keyboardType="email-address"
                         underlineColorAndroid="gray"
                         returnKeyType="next"
                         autoCapitalize="none"
                         editable={this.state.editable}
-                        onSubmitEditing={(event) => { this.refs.Password.focus() }} />
+                        onChangeText={(text) => this.setState({ email: text })}
+                        onSubmitEditing={(event) => { this.onFocus() }} />
+                    <Text style={{ marginLeft: 10, color: "red" }} >{this.state.email_error} </Text>
                     <TextInput
                         ref='Password'
-                        style={[styles.formLoginInput]}
+                        style={[styles.formLoginInput, this.state.marginTextStyle]}
                         placeholder="PASSWORD"
                         secureTextEntry={true}
                         underlineColorAndroid="gray"
                         autoCapitalize="none"
                         editable={this.state.editable}
                         returnKeyType="done"
-                        onSubmitEditing={() => { this.setState({ editable: false }) }} />
+                        onChangeText={(text) => this.setState({ password: text })}
+                        onSubmitEditing={() => { this.onReturnPasword() }} />
+                    <Text style={{ marginLeft: 10, color: "red" }} >{this.state.password_error} </Text>
                     <View style={[styles.touchableLoginView, this.state.marginStyle]}>
                         <TouchableHighlight style={styles.touchableLogin}
-                            onPress={() => this.setState({ editable: true })}>
+                            onPress={() => this.onSubmit()}>
                             <Text style={styles.touchableLoginText}>Login</Text>
                         </TouchableHighlight>
                     </View>
@@ -145,7 +219,7 @@ export default class Index extends React.Component {
                     <Text style={styles.footerText}>Forgot Password</Text>
 
                 </View>
-            </View>
+            </View >
         );
     }
 }
