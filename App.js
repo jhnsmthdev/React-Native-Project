@@ -13,8 +13,8 @@ import Signup from './src/screens/signup';
 
 const stackNavigator = StackNavigator(
   {
-    Signup: { screen: Signup },
     Login: { screen: Index },
+    Signup: { screen: Signup },
     Info: { screen: InfoScreen }
   },
   {

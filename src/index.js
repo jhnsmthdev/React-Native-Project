@@ -50,8 +50,8 @@ export default class Index extends React.Component {
         let newSize = Dimensions.get('window').height - e.endCoordinates.height
         this.setState({
             visibleHeight: newSize,
-            topLogo: { width: 100, height: 70 },
-            marginStyle: { marginTop: 15 },
+            topLogo: styles.topLogoAnimated,
+            marginStyle: styles.touchableLoginViewAnimated,
             // marginTextStyle: { marginTop: 20 }
         })
     }
@@ -60,8 +60,8 @@ export default class Index extends React.Component {
         LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
         this.setState({
             visibleHeight: Dimensions.get('window').height,
-            topLogo: { width: 186, height: 112 },
-            marginStyle: { marginTop: 25 },
+            topLogo: styles.topLogo,
+            marginStyle: styles.touchableLoginView,
             // marginTextStyle: { marginTop: 20 }
         })
     }
@@ -137,7 +137,7 @@ export default class Index extends React.Component {
         return (
             <View style={[styles.container, { height: this.state.visibleHeight }]}>
                 <View style={styles.logo}>
-                    <Image source={require("../assets/sample-logo1.png")} style={[this.state.topLogo]} />
+                    <Image source={require("../assets/sample-logo1.png")} style={[styles.topLogo, this.state.topLogo]} />
                 </View>
 
                 <View>
@@ -155,6 +155,7 @@ export default class Index extends React.Component {
                         autoCapitalize="none"
                         editable={this.state.editable}
                         onChangeText={(text) => this.setState({ email: text })}
+                        blurOnSubmit={false}
                         onSubmitEditing={(event) => { this.onFocus() }} />
                     <Text style={{ marginLeft: 10, color: "red" }} >{this.state.email_error} </Text>
                     <TextInput
@@ -167,6 +168,7 @@ export default class Index extends React.Component {
                         editable={this.state.editable}
                         returnKeyType="done"
                         onChangeText={(text) => this.setState({ password: text })}
+                        blurOnSubmit={false}
                         onSubmitEditing={() => { this.onReturnPasword() }} />
                     <Text style={{ marginLeft: 10, color: "red" }} >{this.state.password_error} </Text>
                     <View style={[styles.touchableLoginView, this.state.marginStyle]}>
