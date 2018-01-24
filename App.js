@@ -8,10 +8,13 @@ import { StackNavigator, DrawerNavigator } from 'react-navigation';
 //Screens
 import Index from './src/index';
 import InfoScreen from './src/screens/info'
+import Signup from './src/screens/signup';
 
 
 const stackNavigator = StackNavigator(
   {
+    Signup: { screen: Signup },
+    Login: { screen: Index },
     Info: { screen: InfoScreen }
   },
   {
@@ -21,8 +24,8 @@ const stackNavigator = StackNavigator(
 
 const RNProjectRoute = DrawerNavigator(
   {
-    Login: {
-      screen: Index
+    Main: {
+      screen: stackNavigator
     }
   }
 );

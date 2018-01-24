@@ -24,7 +24,7 @@ export default StyleSheet.create({
         // backgroundColor: '#1D1F26',
         fontSize: 16,
         padding: 10,
-        marginTop: 30
+        marginTop: 20
     },
     formLoginDisabled: {
         height: 60,
@@ -37,7 +37,7 @@ export default StyleSheet.create({
     },
     touchableLoginView: {
         alignItems: "center",
-        marginTop: 40
+        marginTop: 25
     },
     touchableLogin: {
         backgroundColor: "#232E51",

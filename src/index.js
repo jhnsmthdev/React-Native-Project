@@ -52,7 +52,7 @@ export default class Index extends React.Component {
             visibleHeight: newSize,
             topLogo: { width: 100, height: 70 },
             marginStyle: { marginTop: 15 },
-            marginTextStyle: { marginTop: 10 }
+            // marginTextStyle: { marginTop: 20 }
         })
     }
 
@@ -61,8 +61,8 @@ export default class Index extends React.Component {
         this.setState({
             visibleHeight: Dimensions.get('window').height,
             topLogo: { width: 186, height: 112 },
-            marginStyle: { marginTop: 40 },
-            marginTextStyle: { marginTop: 30 }
+            marginStyle: { marginTop: 25 },
+            // marginTextStyle: { marginTop: 20 }
         })
     }
 
@@ -108,6 +108,7 @@ export default class Index extends React.Component {
         } else {
             this.setState({ editable: true, email_error: "", password_error: "" })
             alert("Logging in......")
+            Keyboard.dismiss()
 
         }
     }
@@ -132,6 +133,7 @@ export default class Index extends React.Component {
 
 
     render() {
+        const { navigate } = this.props.navigation
         return (
             <View style={[styles.container, { height: this.state.visibleHeight }]}>
                 <View style={styles.logo}>
@@ -157,7 +159,7 @@ export default class Index extends React.Component {
                     <Text style={{ marginLeft: 10, color: "red" }} >{this.state.email_error} </Text>
                     <TextInput
                         ref='Password'
-                        style={[styles.formLoginInput, this.state.marginTextStyle]}
+                        style={[styles.formLoginInput]}
                         placeholder="PASSWORD"
                         secureTextEntry={true}
                         underlineColorAndroid="gray"
@@ -215,7 +217,9 @@ export default class Index extends React.Component {
                 </View>
 
                 <View style={styles.footer}>
-                    <Text style={styles.footerText}>Don't Have An Account?</Text>
+                    <TouchableHighlight onPress={() => navigate("Signup")}>
+                        <Text style={styles.footerText}>Don't Have An Account?</Text>
+                    </TouchableHighlight>
                     <Text style={styles.footerText}>Forgot Password</Text>
 
                 </View>
