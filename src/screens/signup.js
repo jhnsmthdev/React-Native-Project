@@ -23,7 +23,13 @@ export default class Signup extends React.Component {
             viewStyle: null,
             emailInputStyle: null,
             passwordInputStyle: null,
-            touchableViewStyle: null
+            touchableViewStyle: null,
+            email: "",
+            email_error: "",
+            password: "",
+            password_error: "",
+            confirm_password: "",
+            confirm_password_error: ""
         }
     }
 
@@ -55,11 +61,87 @@ export default class Signup extends React.Component {
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
         this.setState({
             viewStyle: styles.topView,
-            emailInputStyle: styles.emailInput,
-            passwordInputStyle: styles.passwordInput,
+            emailInputStyle: styles.emailInputMarginTop,
+            passwordInputStyle: styles.passwordInputMarginTop,
             touchableViewStyle: styles.touchableView
         })
     }
+
+    validateEmail = (email) => {
+        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(email);
+    };
+
+    onFocus() {
+        if (this.state.email == "") {
+            this.setState({
+                email_error: "Email Address Required"
+            })
+            this.refs.Email.focus();
+        } else if (!this.validateEmail(this.state.email)) {
+            this.setState({
+                email_error: "Invalid Email Address"
+            })
+        } else {
+            this.setState({
+                email_error: ""
+            })
+            this.refs.Password.focus();
+        }
+    }
+
+    onReturnPassword() {
+        if (this.state.password == "") {
+            this.setState({
+                password_error: "Password Required"
+            })
+        } else {
+            this.setState({ email_error: "", password_error: "" })
+            this.refs.confirmPassword.focus()
+        }
+    }
+
+    onReturnConfirmPasword() {
+        if (this.state.confirm_password == "") {
+            this.setState({
+                confirm_password_error: "Must re-type your password"
+            })
+        } else {
+            this.setState({ confirm_password_error: "", error: "", email_error: "", password_error: "" })
+            this.onSubmit()
+        }
+    }
+
+    onSubmit() {
+        if (this.state.password == "" && this.state.email == "" && this.state.confirm_password == "") {
+            this.setState({
+                email_error: "Email Address Required",
+                password_error: "Password Required",
+                confirm_password_error: "Must re-type your password"
+            })
+            this.refs.Email.focus();
+
+        } else if (this.state.password != this.state.confirm_password) {
+            this.setState({
+                confirm_password_error: "Password do not match!"
+            })
+            Keyboard.dismiss()
+        }
+        else if (!this.validateEmail(this.state.email)) {
+            this.setState({
+                email_error: "Invalid Email Address"
+            })
+            this.refs.Email.focus();
+        } else {
+            this.setState({ email_error: "", password_error: "", confirm_password_error: "" })
+            alert("Signing up......")
+            Keyboard.dismiss()
+
+        }
+    }
+
+
+
 
     render() {
         return (
@@ -72,39 +154,46 @@ export default class Signup extends React.Component {
                 </View>
                 <View>
                     <TextInput
-                        ref='Email'
-                        style={[styles.emailInput, this.state.emailInputStyle]}
+                        ref="Email"
+                        style={[styles.emailInput, styles.emailInputMarginTop, this.state.emailInputStyle]}
                         placeholder="EMAIL"
                         keyboardType="email-address"
                         underlineColorAndroid="gray"
                         returnKeyType="next"
                         autoCapitalize="none"
+                        onChangeText={(text) => this.setState({ email: text })}
                         blurOnSubmit={false}
-                        onSubmitEditing={(event) => this.refs.Password.focus()} />
+                        onSubmitEditing={(event) => { this.onFocus() }} />
+                    <Text style={{ marginLeft: 10, color: "red" }} >{this.state.email_error} </Text>
                     <TextInput
                         ref='Password'
-                        style={[styles.passwordInput, this.state.passwordInputStyle]}
+                        style={[styles.passwordInput, styles.passwordInputMarginTop, this.state.passwordInputStyle]}
                         placeholder="PASSWORD"
                         secureTextEntry={true}
                         underlineColorAndroid="gray"
                         autoCapitalize="none"
                         returnKeyType="next"
                         blurOnSubmit={false}
-                        onSubmitEditing={(event) => this.refs.confirmPassword.focus()}
+                        onChangeText={(text) => this.setState({ password: text })}
+                        onSubmitEditing={(event) => { this.onReturnPassword() }}
                     />
+                    <Text style={{ marginLeft: 10, color: "red" }} >{this.state.password_error} </Text>
                     <TextInput
                         ref='confirmPassword'
-                        style={[styles.passwordInput, this.state.passwordInputStyle]}
+                        style={[styles.passwordInput, styles.passwordInputMarginTop, this.state.passwordInputStyle]}
                         placeholder="CONFIRM PASSWORD"
                         secureTextEntry={true}
                         underlineColorAndroid="gray"
                         blurOnSubmit={false}
                         autoCapitalize="none"
                         returnKeyType="done"
+                        onChangeText={(text) => this.setState({ confirm_password: text })}
+                        onSubmitEditing={(event) => this.onReturnConfirmPasword()}
                     />
+                    <Text style={{ marginLeft: 10, color: "red" }} >{this.state.confirm_password_error} </Text>
                     <View style={[styles.touchableView, this.state.touchableViewStyle]}>
                         <TouchableHighlight style={styles.touchable}
-                            onPress={() => console.log("Sign up pressed!")}>
+                            onPress={() => this.onSubmit()}>
                             <Text style={styles.touchableText}>Signup</Text>
                         </TouchableHighlight>
                     </View>
