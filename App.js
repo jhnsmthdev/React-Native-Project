@@ -9,13 +9,15 @@ import { StackNavigator, DrawerNavigator } from 'react-navigation';
 import Index from './src/index';
 import InfoScreen from './src/screens/info'
 import Signup from './src/screens/signup';
+import Drawer from './src/drawer/drawer';
+import Main from './src/screens/main';
 
 
 const stackNavigator = StackNavigator(
   {
     Login: { screen: Index },
+    Info: { screen: InfoScreen },
     Signup: { screen: Signup },
-    Info: { screen: InfoScreen }
   },
   {
     headerMode: "none"
@@ -24,8 +26,22 @@ const stackNavigator = StackNavigator(
 
 const RNProjectRoute = DrawerNavigator(
   {
-    Main: {
+    Stack: {
       screen: stackNavigator
+    },
+    Home: {
+      screen: Main
+    },
+
+  },
+  {
+    contentComponent: Drawer,
+    contentOptions: {
+      activeTintColor: "#e91e63",
+      style: {
+        flex: 1,
+        paddingTop: 15
+      }
     }
   }
 );

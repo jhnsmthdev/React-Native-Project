@@ -109,7 +109,7 @@ export default class Index extends React.Component {
             this.setState({ editable: true, email_error: "", password_error: "" })
             alert("Logging in......")
             Keyboard.dismiss()
-
+            this.props.navigation.navigate("Home")
         }
     }
 
